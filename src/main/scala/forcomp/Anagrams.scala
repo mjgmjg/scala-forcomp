@@ -91,7 +91,27 @@ object Anagrams {
    *  Note that the order of the occurrence list subsets does not matter -- the subsets
    *  in the example above could have been displayed in some other order.
    */
-  def combinations(occurrences: Occurrences): List[Occurrences] = ???
+  def combinations(occurrences: Occurrences): List[Occurrences] = 
+       
+    def internal_comb(occurrences: Occurrences):  List[Occurrences] = 
+        if(occurrences.isEmpty){
+          List()
+        }else if(occurrences.size == 1){
+          val oc = occurrences.head
+          val listoccs = for{ i <- 1 to oc._2 } yield List((oc._1, i))
+          listoccs.toList
+        }else{
+          val comb_head = internal_comb(List(occurrences.head))
+          val comb_tail = internal_comb(occurrences.tail) 
+          val comb_head_tail = for{
+                h <- comb_head
+                t <- comb_tail
+          } yield h ::: t
+          (comb_head ::: comb_tail ::: comb_head_tail).toList
+        }
+    
+    List() :: internal_comb(occurrences)
+  }
 
   /** Subtracts occurrence list `y` from occurrence list `x`.
    * 
@@ -103,7 +123,16 @@ object Anagrams {
    *  Note: the resulting value is an occurrence - meaning it is sorted
    *  and has no zero-entries.
    */
-  def subtract(x: Occurrences, y: Occurrences): Occurrences = ???
+  def subtract(x: Occurrences, y: Occurrences): Occurrences = {
+    val ym = y.toMap withDefaultValue 0
+    for{
+      xe <- x
+      k = xe._1
+      v = xe._2
+      nv =  v - ym(k)
+      if nv > 0
+    } yield (k, nv) 
+  }
 
   /** Returns a list of all anagram sentences of the given sentence.
    *  
