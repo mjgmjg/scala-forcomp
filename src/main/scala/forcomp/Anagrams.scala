@@ -37,7 +37,15 @@ object Anagrams {
     w.groupBy((elem:Char) => elem.toLower).mapValues(_.length).toList.sortBy(_._1)
 
   /** Converts a sentence into its character occurrence list. */
-  def sentenceOccurrences(s: Sentence): Occurrences = ???
+  def sentenceOccurrences(s: Sentence): Occurrences = {
+    import collection.mutable.HashMap
+    val wc = new HashMap[Char, Int]() withDefaultValue 0
+    for{
+      w <- s
+      o <- wordOccurrences(w)
+    } wc(o._1) += o._2
+    wc.toList.sortBy(_._1)
+  }
 
   /** The `dictionaryByOccurrences` is a `Map` from different occurrences to a sequence of all
    *  the words that have that occurrence count.
